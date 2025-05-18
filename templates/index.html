@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موتور جستجوی وب</title>
+    <style>
+        body {
+            font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Black background */
+            color: #fff; /* White text for better contrast */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            color: #e74c3c; /* Red logo */
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            background-color: #fff; /* White background for search box */
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 15px 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            text-align: right;
+            border-radius: 30px 0 0 30px;
+            color: #333; /* Dark text for input */
+        }
+
+        .search-button {
+            background-color: #e74c3c; /* Red search button */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 0 30px 30px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #c0392b; /* Darker red on hover */
+        }
+
+        .suggestions-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .suggestion {
+            background-color: #333; /* Dark background for suggestions */
+            color: #fff; /* White text for suggestions */
+            padding: 10px 20px;
+            margin: 8px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .suggestion:hover {
+            background-color: #555; /* Lighter black on hover */
+            color: #e74c3c; /* Red color on hover */
+        }
+
+        .results-container {
+            background-color: #111; /* Darker background for results */
+            border-radius: 8px;
+            box-shadow: 0 1px 6px rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .result-item {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-size: 1.2em;
+            color: #e74c3c; /* Red result title */
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+            color: #c0392b; /* Darker red on hover */
+        }
+
+        .result-url {
+            color: #aaa;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .result-summary {
+            color: #ddd;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .loading-container {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .spinner {
+            border: 4px solid #555;
+            border-top: 4px solid #e74c3c; /* Red spinner */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .search-info {
+            color: #bbb;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .no-results {
+            color: #ccc;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .no-results-suggestions {
+            margin-top: 10px;
+            padding-right: 20px;
+        }
+
+        .no-results-suggestions li {
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #888;
+            font-size: 0.8em;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">جستجوگر وب</h1>
+        </div>
+
+        <div class="search-box">
+            <button id="search-btn" class="search-button">جستجو</button>
+            <input type="text" id="search-input" class="search-input" placeholder="عبارت مورد نظر خود را وارد کنید..." autofocus>
+        </div>
+
+        <div class="suggestions-container" id="suggestions">
+            </div>
+
+        <div class="loading-container" id="loading">
+            <div class="spinner"></div>
+            <p>در حال جستجو...</p>
+        </div>
+
+        <div class="results-container" id="results">
+            </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 موتور جستجوی وب</p>
+    </div>
+
+    <script>
+        // نمایش اطلاعات نمایه‌سازی
+        let stats = {{ stats|tojson }};
+        const suggestionsContainerInitial = document.getElementById('suggestions');
+        if (stats && stats.document_count > 0) {
+            const searchInfoElement = document.createElement('div');
+            searchInfoElement.className = 'search-info';
+            searchInfoElement.textContent = `در حال جستجو در ${stats.document_count.toLocaleString()} صفحه وب نمایه‌شده`;
+            suggestionsContainerInitial.appendChild(searchInfoElement);
+        }
+
+        // دریافت المان‌های موردنیاز
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const resultsContainer = document.getElementById('results');
+        const loadingElement = document.getElementById('loading');
+        const suggestionsContainer = document.getElementById('suggestions');
+
+        // اجرای جستجو با کلیک بر روی دکمه جستجو
+        searchBtn.addEventListener('click', performSearch);
+
+        // اجرای جستجو با فشردن کلید Enter
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // تعریف مثال‌های جستجو
+        const searchExamples = [
+            'آخرین اخبار',
+            'بهترین فیلم های 2024',
+            'طرز تهیه کیک',
+            'آب و هوا تهران'
+        ];
+
+        // نمایش مثال‌های جستجو
+        searchExamples.forEach(example => {
+            const suggestionElement = document.createElement('div');
+            suggestionElement.className = 'suggestion';
+            suggestionElement.textContent = example;
+            suggestionElement.addEventListener('click', function() {
+                searchInput.value = example;
+                performSearch();
+            });
+            suggestionsContainer.appendChild(suggestionElement);
+        });
+
+        // تابع انجام جستجو
+        function performSearch() {
+            const query = searchInput.value.trim();
+
+            if (query === '') {
+                return;
+            }
+
+            // نمایش لودینگ
+            loadingElement.style.display = 'block';
+            resultsContainer.innerHTML = '';
+
+            // حذف پیشنهادهای جستجو هنگام شروع جستجو
+            suggestionsContainer.innerHTML = '';
+            const searchInfoElementDuringSearch = document.createElement('div');
+            searchInfoElementDuringSearch.className = 'search-info';
+            searchInfoElementDuringSearch.textContent = `در حال جستجو برای "${query}"...`;
+            suggestionsContainer.appendChild(searchInfoElementDuringSearch);
+
+
+            // ارسال درخواست به API
+            fetch(`/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // مخفی کردن لودینگ
+                    loadingElement.style.display = 'none';
+                    suggestionsContainer.innerHTML = ''; // پاک کردن پیام "در حال جستجو"
+
+                    // نمایش نتایج
+                    displayResults(data, query);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingElement.style.display = 'none';
+                    suggestionsContainer.innerHTML = ''; // پاک کردن پیام "در حال جستجو"
+                    resultsContainer.innerHTML = '<p class="no-results">خطا در دریافت نتایج. لطفاً دوباره تلاش کنید.</p>';
+                });
+        }
+
+        // تابع نمایش نتایج
+        function displayResults(data, query) {
+            // اگر نتیجه‌ای وجود نداشت
+            if (!data || !data.results || data.results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <p>هیچ نتیجه‌ای برای "${query}" یافت نشد.</p>
+                        <p>پیشنهادات:</p>
+                        <ul class="no-results-suggestions">
+                            <li>املای کلمات خود را بررسی کنید.</li>
+                            <li>از کلمات کلیدی دیگری استفاده کنید.</li>
+                            <li>از کلمات کلیدی عمومی‌تر استفاده کنید.</li>
+                        </ul>
+                    </div>
+                `;
+                return;
+            }
+
+            // نمایش اطلاعات جستجو
+            let resultsHtml = `
+                <div class="search-info">
+                    حدود ${data.total.toLocaleString()} نتیجه در ${data.time.toFixed(3)} ثانیه
+                </div>
+            `;
+
+            // نمایش نتایج
+            data.results.forEach(result => {
+                resultsHtml += `
+                    <div class="result-item">
+                        <a href="${result.url}" class="result-title" target="_blank">${result.title}</a>
+                        <div class="result-url">${result.url}</div>
+                        <div class="result-summary">${result.summary}</div>
+                    </div>
+                `;
+            });
+
+            resultsContainer.innerHTML = resultsHtml;
+        }
+    </script>
+</body>
+</html>

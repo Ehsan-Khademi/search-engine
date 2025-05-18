@@ -1,0 +1,5 @@
+.idea/
+ __pycache__/
+crawled_data.json
+crawler.log
+Crawler_python_Search_Engine/venv/

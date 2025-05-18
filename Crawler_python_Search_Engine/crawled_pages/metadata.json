@@ -1,0 +1,16 @@
+{
+  "total_pages": 10,
+  "domain": "huggingface.co",
+  "url_mapping": {
+    "0": "https://huggingface.co",
+    "1": "https://huggingface.co/",
+    "2": "https://huggingface.co/datasets",
+    "3": "https://huggingface.co/spaces",
+    "4": "https://huggingface.co/posts",
+    "5": "https://huggingface.co/docs",
+    "6": "https://huggingface.co/enterprise",
+    "7": "https://huggingface.co/pricing",
+    "8": "https://huggingface.co/login",
+    "9": "https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E-Instruct"
+  }
+}
